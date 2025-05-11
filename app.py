@@ -1,31 +1,22 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, flash, redirect
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'  # Required for flashing messages
+app.secret_key = 'your_secret_key'
 
-@app.route('/')
-def home():
-    return redirect(url_for('contact'))
-
-@app.route('/contact', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])  # Changed from '/contact' to '/'
 def contact():
     if request.method == 'POST':
         name = request.form.get('name')
         email = request.form.get('email')
-        subject = request.form.get('subject')
         message = request.form.get('message')
-
-        # Simple validation
+        
         if not name or not email or not message:
-            flash('Please fill out all required fields.', 'error')
-            return redirect(url_for('contact'))
+            flash('All fields are required.', 'error')
+        else:
+            # Process the data (e.g., send email or store in DB)
+            flash('Thank you for your message!', 'success')
+            return redirect('/')
+    return render_template('index.html')  # Make sure your HTML is named index.html and is in templates/
 
-        # Simulate form processing (e.g., print or save)
-        print(f"Message received from {name} <{email}>: {subject} - {message}")
-        flash('Your message has been sent successfully!', 'success')
-        return redirect(url_for('contact'))
-
-    return render_template('contact.html')
-    
 if __name__ == '__main__':
     app.run(debug=True)
